@@ -41,7 +41,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" HorizontalAlignment="Left">Расширение файла:</Label>
-                <TextBox Text="{Binding ExtensionFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                <TextBox Text="{Binding ExtensionFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" ToolTip="Для нескольких расширений, разделить ;"/>
             </Grid>
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
@@ -275,9 +276,16 @@ namespace PhotoSorter
         {
             _needStop = false;
             var dirInfo = new DirectoryInfo(PhotoPath);
-            var files = dirInfo.GetFiles("*.jpg", SearchOption.AllDirectories);
-            _fileCount = files.Length;
-            for (var i = 0; i < files.Length; i++)
+            var files = new List<FileInfo>();
+            var extensions = _extensionFilter.Split(new char[]
+                                                    {
+                                                            ';'
+                                                    }, StringSplitOptions.RemoveEmptyEntries);
+            if (!extensions.Any())
+                return;
+            Array.ForEach(extensions, ext => files.AddRange(dirInfo.GetFiles(ext, SearchOption.AllDirectories)));
+            _fileCount = files.Count;
+            for (var i = 0; i < files.Count; i++)
             {
                 if (_needStop)
                     break;
