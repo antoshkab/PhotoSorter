@@ -17,6 +17,8 @@ namespace PhotoSorter
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        #region Fields and properties. Events and delegate
+
         private string _photoPath;
 
         public string PhotoPath
@@ -74,13 +76,26 @@ namespace PhotoSorter
             {
                 return !string.IsNullOrWhiteSpace(PhotoPath) && Directory.Exists(PhotoPath) &&
                        !string.IsNullOrWhiteSpace(SavePath) && Directory.Exists(SavePath) &&
-                       !string.IsNullOrWhiteSpace(DirMask) && !DirMask.ToCharArray().Any(ch => Path.GetInvalidPathChars().Contains(ch));
+                       !string.IsNullOrWhiteSpace(DirMask) && !DirMask.ToCharArray().Any(ch => Path.GetInvalidPathChars().Contains(ch)) &&
+                       !string.IsNullOrWhiteSpace(ExtensionFilter);
             }
         }
 
         public string SampleDirName
         {
-            get { return DateTime.Now.ToString(_dirMask); }
+            get 
+            {
+                try
+                {
+                    if (DirMask.ToCharArray().Any(ch => Path.GetInvalidPathChars().Contains(ch)))
+                        throw new FormatException();
+                    return string.Format("Пример: {0}", DateTime.Now.ToString(_dirMask));
+                }
+                catch
+                {
+                    return "Некорректная маска";
+                }
+            }
         }
 
         private string _dirMask;
@@ -98,18 +113,18 @@ namespace PhotoSorter
             }
         }
 
-        public double ProgressPrecent { get { return ProgressValue != 0 ? ProgressValue / 100 : 0; } }
+        public double ProgressPrecent
+        {
+            get { return ProgressValue != 0 ? ProgressValue / 100 : 0; }
+        }
 
         public double ProgressValue { get; private set; }
-
         private double _fileCount;
-
         public TaskbarItemProgressState TaskbarItemProgressState { get; private set; }
-
         public ObservableCollection<string> ProcessedFiles { get; private set; }
-
         private readonly BackgroundWorker _backgroundWorker;
         private bool _needStop;
+        private string _extensionFilter;
 
         public ActionCommand SelectPhotoPathCommand
         {
@@ -131,6 +146,23 @@ namespace PhotoSorter
             get { return new ActionCommand(o => StopProcessing(), o => ProcessStarted); }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string ExtensionFilter
+        {
+            get { return _extensionFilter; }
+            set
+            {
+                _extensionFilter = value;
+                OnPropertyChanged();
+                ConfigurationManager.AppSettings.Set("ExtensionFilter", _extensionFilter);
+            }
+        }
+
+        #endregion
+
+        #region Constructors
+
         public MainViewModel()
         {
             _backgroundWorker = new BackgroundWorker();
@@ -145,36 +177,51 @@ namespace PhotoSorter
             _dirMask = ConfigurationManager.AppSettings["DirMask"];
             _savePath = ConfigurationManager.AppSettings["SavePath"];
             _moveFiles = Convert.ToBoolean(ConfigurationManager.AppSettings["MoveFiles"]);
+            _extensionFilter = ConfigurationManager.AppSettings["ExtensionFilter"];
         }
 
-        private void BackgroundWorkerOnRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        #endregion
+
+        #region Method
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            MessageBox.Show("Сортировка завершена.", Application.Current.MainWindow.Title, MessageBoxButton.OK,
-                MessageBoxImage.Information);
-            TaskbarItemProgressState = TaskbarItemProgressState.None;
-            OnPropertyChanged("TaskbarItemProgressState");
-            ProgressValue = 0;
-            OnPropertyChanged("ProgressPrecent");
-            OnPropertyChanged("ProgressValue");
-            _fileCount = 0;
-            OnPropertyChanged("ProcessStarted");
-            OnPropertyChanged("ProcessNotStarted");
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void StartProcessing()
+
+        private string GetFolderName(string filePath)
         {
-            ProcessedFiles.Clear();
-            TaskbarItemProgressState = TaskbarItemProgressState.Normal;
-            OnPropertyChanged("TaskbarItemProgressState");
-            _backgroundWorker.RunWorkerAsync();
-            OnPropertyChanged("ProcessStarted");
-            OnPropertyChanged("ProcessNotStarted");
+            using (var photo = File.Open(filePath, FileMode.Open, FileAccess.Read))
+            {
+                try
+                {
+                    var decoder = BitmapDecoder.Create(photo, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.Default);
+                    var bitmapMetadata = (BitmapMetadata)decoder.Frames[0].Metadata;
+                    if (bitmapMetadata != null)
+                    {
+                        var dt = Convert.ToDateTime(bitmapMetadata.DateTaken);
+                        photo.Flush();
+                        photo.Close();
+                        return dt.ToString(_dirMask);
+                    }
+                    photo.Flush();
+                    photo.Close();
+                    var fi = new FileInfo(filePath);
+                    return fi.CreationTime.ToString(_dirMask);
+                }
+                catch
+                {
+                    photo.Flush();
+                    photo.Close();
+                    var fi = new FileInfo(filePath);
+                    return fi.CreationTime.ToString(_dirMask);
+                }
+            }
         }
 
-        private void StopProcessing()
-        {
-            _needStop = true;
-        }
 
         private void SelectPhotoPath()
         {
@@ -189,6 +236,7 @@ namespace PhotoSorter
             }
         }
 
+
         private void SelectSavePath()
         {
             using (var dlg = new FolderBrowserDialog())
@@ -202,13 +250,26 @@ namespace PhotoSorter
             }
         }
 
-        private void BackgroundWorkerOnProgressChanged(object sender, ProgressChangedEventArgs e)
+
+        private void StartProcessing()
         {
-            ProgressValue = e.ProgressPercentage / _fileCount * 100d;
-            OnPropertyChanged("ProgressValue");
-            OnPropertyChanged("ProgressPrecent");
-            ProcessedFiles.Add(e.UserState.ToString());
+            ProcessedFiles.Clear();
+            TaskbarItemProgressState = TaskbarItemProgressState.Normal;
+            OnPropertyChanged("TaskbarItemProgressState");
+            _backgroundWorker.RunWorkerAsync();
+            OnPropertyChanged("ProcessStarted");
+            OnPropertyChanged("ProcessNotStarted");
         }
+
+
+        private void StopProcessing()
+        {
+            _needStop = true;
+        }
+
+        #endregion
+
+        #region HandlesEvent
 
         private void BackgroundWorkerOnDoWork(object sender, DoWorkEventArgs e)
         {
@@ -239,34 +300,30 @@ namespace PhotoSorter
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void BackgroundWorkerOnProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new PropertyChangedEventArgs(propertyName));
+            ProgressValue = e.ProgressPercentage / _fileCount * 100d;
+            OnPropertyChanged("ProgressValue");
+            OnPropertyChanged("ProgressPrecent");
+            ProcessedFiles.Add(e.UserState.ToString());
         }
 
 
-        private string GetFolderName(string filePath)
+        private void BackgroundWorkerOnRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            using (var photo = File.Open(filePath, FileMode.Open, FileAccess.Read))
-            {
-                var decoder = BitmapDecoder.Create(photo, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.Default);
-                var bitmapMetadata = (BitmapMetadata)decoder.Frames[0].Metadata;
-                if (bitmapMetadata != null)
-                {
-                    var dt = Convert.ToDateTime(bitmapMetadata.DateTaken);
-                    photo.Flush();
-                    photo.Close();
-                    return dt.ToString(_dirMask);
-                }
-                photo.Flush();
-                photo.Close();
-                var fi = new FileInfo(filePath);
-                return fi.CreationTime.ToString(_dirMask);
-            }
+            MessageBox.Show("Сортировка завершена.", Application.Current.MainWindow.Title, MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            TaskbarItemProgressState = TaskbarItemProgressState.None;
+            OnPropertyChanged("TaskbarItemProgressState");
+            ProgressValue = 0;
+            OnPropertyChanged("ProgressPrecent");
+            OnPropertyChanged("ProgressValue");
+            _fileCount = 0;
+            OnPropertyChanged("ProcessStarted");
+            OnPropertyChanged("ProcessNotStarted");
         }
+
+        #endregion
     }
 }
