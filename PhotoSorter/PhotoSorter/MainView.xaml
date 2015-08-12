@@ -45,7 +45,7 @@
                 <Button Grid.Column="0" Content="Старт" Margin="10" Command="{Binding StartProcessingCommand}"/>
                 <Button Grid.Column="1" Content="Стоп" Margin="10" Command="{Binding StopProcessingCommand}"/>
             </Grid>
-            <ProgressBar Value="{Binding ProgressPrecent, Mode=OneWay}" Height="24" Maximum="100" Minimum="0" Margin="10"/>
+            <ProgressBar Value="{Binding ProgressValue, Mode=OneWay}" Height="24" Maximum="100" Minimum="0" Margin="10"/>
         </StackPanel>
         <ListBox DockPanel.Dock="Bottom" ItemsSource="{Binding ProcessedFiles, Mode=OneWay}"/>
     </DockPanel>

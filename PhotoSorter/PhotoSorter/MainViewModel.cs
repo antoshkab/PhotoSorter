@@ -23,8 +23,9 @@ namespace PhotoSorter
             get { return _photoPath; }
             private set
             {
-                _photoPath = value; 
+                _photoPath = value;
                 OnPropertyChanged();
+                OnPropertyChanged("IsValid");
                 ConfigurationManager.AppSettings.Set("PhotoPath", _photoPath);
             }
         }
@@ -51,6 +52,7 @@ namespace PhotoSorter
             {
                 _savePath = value;
                 OnPropertyChanged();
+                OnPropertyChanged("IsValid");
                 ConfigurationManager.AppSettings.Set("SavePath", _savePath);
             }
         }
@@ -78,7 +80,18 @@ namespace PhotoSorter
             get { return !ProcessStarted; }
         }
 
-        public double ProgressPrecent { get; private set; }
+        public bool IsValid
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(PhotoPath) && Directory.Exists(PhotoPath) &&
+                       !string.IsNullOrWhiteSpace(SavePath) && Directory.Exists(SavePath);
+            }
+        }
+
+        public double ProgressPrecent { get { return ProgressValue != 0 ? ProgressValue / 100 : 0; } }
+
+        public double ProgressValue { get; private set; }
 
         private double _fileCount;
 
@@ -101,7 +114,7 @@ namespace PhotoSorter
 
         public ActionCommand StartProcessingCommand
         {
-            get { return new ActionCommand(o => StartProcessing(), o => !ProcessStarted); }
+            get { return new ActionCommand(o => StartProcessing(), o => !ProcessStarted && IsValid); }
         }
 
         public ActionCommand StopProcessingCommand
@@ -131,8 +144,9 @@ namespace PhotoSorter
                 MessageBoxImage.Information);
             TaskbarItemProgressState = TaskbarItemProgressState.None;
             OnPropertyChanged("TaskbarItemProgressState");
-            ProgressPrecent = 0;
+            ProgressValue = 0;
             OnPropertyChanged("ProgressPrecent");
+            OnPropertyChanged("ProgressValue");
             _fileCount = 0;
             OnPropertyChanged("ProcessStarted");
             OnPropertyChanged("ProcessNotStarted");
@@ -140,7 +154,8 @@ namespace PhotoSorter
 
         private void StartProcessing()
         {
-            TaskbarItemProgressState = TaskbarItemProgressState.Indeterminate;
+            ProcessedFiles.Clear();
+            TaskbarItemProgressState = TaskbarItemProgressState.Normal;
             OnPropertyChanged("TaskbarItemProgressState");
             _backgroundWorker.RunWorkerAsync();
             OnPropertyChanged("ProcessStarted");
@@ -180,16 +195,10 @@ namespace PhotoSorter
 
         private void BackgroundWorkerOnProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (e.ProgressPercentage == -1)
-            {
-                TaskbarItemProgressState = TaskbarItemProgressState.Normal;
-                OnPropertyChanged("TaskbarItemProgressState");
-                OnPropertyChanged("FileCount");
-                return;
-            }
-
-            ProgressPrecent = e.ProgressPercentage/_fileCount * 100d;
+            ProgressValue = e.ProgressPercentage / _fileCount * 100d;
+            OnPropertyChanged("ProgressValue");
             OnPropertyChanged("ProgressPrecent");
+            ProcessedFiles.Add(e.UserState.ToString());
         }
 
         private void BackgroundWorkerOnDoWork(object sender, DoWorkEventArgs e)
@@ -198,20 +207,26 @@ namespace PhotoSorter
             var dirInfo = new DirectoryInfo(PhotoPath);
             var files = dirInfo.GetFiles("*.jpg", SearchOption.AllDirectories);
             _fileCount = files.Length;
-            _backgroundWorker.ReportProgress(-1);
             for (var i = 0; i < files.Length; i++)
             {
                 if (_needStop)
                     break;
-                var path = Path.Combine(SavePath, GetFolderName(files[i].FullName));
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
-                if (_moveFiles)
-                    File.Move(files[i].FullName, Path.Combine(path, files[i].Name));
-                else
-                    File.Copy(files[i].FullName, Path.Combine(path, files[i].Name), false);
-                _backgroundWorker.ReportProgress(i + 1);
-                ProcessedFiles.Add(files[i].Name);
+                try
+                {
+                    var path = Path.Combine(SavePath, GetFolderName(files[i].FullName));
+                    if (!Directory.Exists(path))
+                        Directory.CreateDirectory(path);
+                    if (_moveFiles)
+                        File.Move(files[i].FullName, Path.Combine(path, files[i].Name));
+                    else
+                        File.Copy(files[i].FullName, Path.Combine(path, files[i].Name), false);
+                }
+                catch (Exception ex)
+                {
+                    _backgroundWorker.ReportProgress(i + 1, string.Format("{0} {1}", ex.Message, files[i].Name));
+                    continue;
+                }
+                _backgroundWorker.ReportProgress(i + 1, files[i].Name);
             }
         }
 
