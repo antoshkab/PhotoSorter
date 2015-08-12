@@ -29,16 +29,14 @@ namespace PhotoSorter.Properties {
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public Resources()
-        {
+        internal Resources() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager
-        {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PhotoSorter.Properties.Resources", typeof(Resources).Assembly);
@@ -53,8 +51,7 @@ namespace PhotoSorter.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture
-        {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -76,8 +73,7 @@ namespace PhotoSorter.Properties {
         ///yyyy - Год в виде четырехзначного числа.
         ///&quot;строка&quot; или &apos;строка&apos; - Буквенный разделитель строк..
         /// </summary>
-        public static string DirMaskToolTip
-        {
+        public static string DirMaskToolTip {
             get {
                 return ResourceManager.GetString("DirMaskToolTip", resourceCulture);
             }

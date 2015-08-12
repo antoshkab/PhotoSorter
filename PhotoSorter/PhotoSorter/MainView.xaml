@@ -42,7 +42,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" HorizontalAlignment="Left">Маска наименовая папки:</Label>
-                <TextBox Text="{Binding DirMask, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" ToolTip="{Binding DirMaskToolTip, Source={StaticResource ResourceKey=Resources}, Mode=OneTime}"/>
+                <TextBox Text="{Binding DirMask, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" ToolTip="{Binding DirMaskToolTip, Source={StaticResource Resources}, Mode=OneTime}"/>
                 <TextBlock Text="{Binding SampleDirName, Mode=OneWay}" Grid.Column="2" TextAlignment="Center" Margin="10,0,0,0"/>
             </Grid>
             <CheckBox Margin="5" Content="Перемещать фотографии" IsChecked="{Binding MoveFiles, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ProcessNotStarted, Mode=OneWay}"/>
