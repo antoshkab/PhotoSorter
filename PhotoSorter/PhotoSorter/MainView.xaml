@@ -22,7 +22,7 @@
                     <ColumnDefinition Width="32"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" HorizontalAlignment="Left">Путь к фотографиям:</Label>
-                <TextBox Text="{Binding PhotoPath, Mode=OneWay}" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox Text="{Binding PhotoPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" IsReadOnly="{Binding ProcessStarted}"/>
                 <Button Command="{Binding SelectPhotoPathCommand}" Content="..." ToolTip="Выбрать путь, где находятся фотографии" Grid.Column="2"/>
             </Grid>
             <Grid Margin="5">
@@ -32,7 +32,7 @@
                     <ColumnDefinition Width="32"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" HorizontalAlignment="Left">Путь к сохранению:</Label>
-                <TextBox Text="{Binding SavePath, Mode=OneWay}" Grid.Column="1" IsReadOnly="True"/>
+                <TextBox Text="{Binding SavePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" IsReadOnly="{Binding ProcessStarted}"/>
                 <Button Command="{Binding SelectSavePathCommand}" Content="..." ToolTip="Выбрать путь, куда фотографии перенесутся" Grid.Column="2"/>
             </Grid>
             <Grid Margin="5">

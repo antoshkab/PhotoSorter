@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
+using PhotoSorter.Properties;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
@@ -30,7 +31,8 @@ namespace PhotoSorter
                 _photoPath = value;
                 OnPropertyChanged();
                 OnPropertyChanged("IsValid");
-                ConfigurationManager.AppSettings.Set("PhotoPath", _photoPath);
+                Settings.Default.PhotoPath = value;
+                Settings.Default.Save();
             }
         }
 
@@ -44,7 +46,8 @@ namespace PhotoSorter
                 _savePath = value;
                 OnPropertyChanged();
                 OnPropertyChanged("IsValid");
-                ConfigurationManager.AppSettings.Set("SavePath", _savePath);
+                Settings.Default.SavePath = value;
+                Settings.Default.Save();
             }
         }
 
@@ -57,7 +60,8 @@ namespace PhotoSorter
             {
                 _moveFiles = value;
                 OnPropertyChanged();
-                ConfigurationManager.AppSettings.Set("MoveFiles", _moveFiles.ToString());
+                Settings.Default.MoveFiles = value;
+                Settings.Default.Save();
             }
         }
 
@@ -75,9 +79,10 @@ namespace PhotoSorter
         {
             get
             {
-                return !string.IsNullOrWhiteSpace(PhotoPath) && Directory.Exists(PhotoPath) &&
-                       !string.IsNullOrWhiteSpace(SavePath) && Directory.Exists(SavePath) &&
-                       !string.IsNullOrWhiteSpace(DirMask) && !DirMask.ToCharArray().Any(ch => Path.GetInvalidPathChars().Contains(ch)) &&
+                return Directory.Exists(PhotoPath) &&
+                       Directory.Exists(SavePath) &&
+                       !string.IsNullOrWhiteSpace(DirMask) && 
+                       !DirMask.ToCharArray().Any(ch => Path.GetInvalidPathChars().Contains(ch)) &&
                        !string.IsNullOrWhiteSpace(ExtensionFilter);
             }
         }
@@ -110,7 +115,8 @@ namespace PhotoSorter
                 OnPropertyChanged();
                 OnPropertyChanged("SampleDirName");
                 OnPropertyChanged("IsValid");
-                ConfigurationManager.AppSettings.Set("DirMask", _dirMask);
+                Settings.Default.DirMask = value;
+                Settings.Default.Save();
             }
         }
 
@@ -174,11 +180,11 @@ namespace PhotoSorter
             _backgroundWorker.RunWorkerCompleted += BackgroundWorkerOnRunWorkerCompleted;
 
             ProcessedFiles = new ObservableCollection<string>();
-            _photoPath = ConfigurationManager.AppSettings["PhotoPath"];
-            _dirMask = ConfigurationManager.AppSettings["DirMask"];
-            _savePath = ConfigurationManager.AppSettings["SavePath"];
-            _moveFiles = Convert.ToBoolean(ConfigurationManager.AppSettings["MoveFiles"]);
-            _extensionFilter = ConfigurationManager.AppSettings["ExtensionFilter"];
+            _photoPath = Settings.Default.PhotoPath;
+            _dirMask = Settings.Default.DirMask;
+            _savePath = Settings.Default.SavePath;
+            _moveFiles = Settings.Default.MoveFiles;
+            _extensionFilter = Settings.Default.ExtensionFilter;
         }
 
         #endregion
@@ -230,6 +236,7 @@ namespace PhotoSorter
             {
                 dlg.Description = "Выбор папки с фотографиями";
                 dlg.ShowNewFolderButton = true;
+                dlg.SelectedPath = PhotoPath;
                 var oldWindow = new OldWindow(new WindowInteropHelper(Application.Current.MainWindow).Handle);
                 if (dlg.ShowDialog(oldWindow) != DialogResult.OK)
                     return;
@@ -244,6 +251,7 @@ namespace PhotoSorter
             {
                 dlg.Description = "Выбор папки для сохранения фотографий";
                 dlg.ShowNewFolderButton = true;
+                dlg.SelectedPath = SavePath;
                 var oldWindow = new OldWindow(new WindowInteropHelper(Application.Current.MainWindow).Handle);
                 if (dlg.ShowDialog(oldWindow) != DialogResult.OK)
                     return;
