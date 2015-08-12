@@ -6,7 +6,7 @@
         xmlns:viewModels="clr-namespace:PhotoSorter"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type viewModels:MainViewModel}}"
-        Title="Сортировка фотографий" Height="480" Width="640">
+        Title="Сортировка фотографий" Height="480" Width="640" MinHeight="480" MinWidth="640">
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo ProgressState="{Binding TaskbarItemProgressState, Mode=OneWay}" ProgressValue="{Binding ProgressPrecent, Mode=OneWay}"/>
     </Window.TaskbarItemInfo>
