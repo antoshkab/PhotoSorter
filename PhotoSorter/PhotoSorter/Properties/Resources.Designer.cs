@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PhotoSorter.Properties
-{
-
-
+namespace PhotoSorter.Properties {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -22,49 +22,64 @@ namespace PhotoSorter.Properties
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources
-    {
-
+    public class Resources {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources()
+        public Resources()
         {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager
+        public static global::System.Resources.ResourceManager ResourceManager
         {
-            get
-            {
-                if ((resourceMan == null))
-                {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PhotoSorter.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture
+        public static global::System.Globalization.CultureInfo Culture
         {
-            get
-            {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to d - День месяца, в диапазоне от 1 до 31.
+        ///dd - День месяца, в диапазоне от 01 до 31.
+        ///M - Месяц, в диапазоне от 1 до 12.
+        ///MM - Месяц, в диапазоне от 01 до 12.
+        ///MMM - Сокращенное название месяца.
+        ///MMMM - Полное название месяца.
+        ///y - Год, в диапазоне от 0 до 99.
+        ///yy - Год, в диапазоне от 00 до 99.
+        ///yyy - Год в виде как минимум трех цифр.
+        ///yyyy - Год в виде четырехзначного числа.
+        ///&quot;строка&quot; или &apos;строка&apos; - Буквенный разделитель строк..
+        /// </summary>
+        public static string DirMaskToolTip
+        {
+            get {
+                return ResourceManager.GetString("DirMaskToolTip", resourceCulture);
             }
         }
     }

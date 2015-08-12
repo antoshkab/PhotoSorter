@@ -35,7 +35,16 @@
                 <TextBox Text="{Binding SavePath, Mode=OneWay}" Grid.Column="1" IsReadOnly="True"/>
                 <Button Command="{Binding SelectSavePathCommand}" Content="..." ToolTip="Выбрать путь, куда фотографии перенесутся" Grid.Column="2"/>
             </Grid>
-            <CheckBox Margin="5" Content="Создать папки по месяцам (MM.yyyy (04.2000))" IsChecked="{Binding CreateByMonth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ProcessNotStarted, Mode=OneWay}"/>
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" HorizontalAlignment="Left">Маска наименовая папки:</Label>
+                <TextBox Text="{Binding DirMask, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" ToolTip="{Binding DirMaskToolTip, Source={StaticResource ResourceKey=Resources}, Mode=OneTime}"/>
+                <TextBlock Text="{Binding SampleDirName, Mode=OneWay}" Grid.Column="2" TextAlignment="Center" Margin="10,0,0,0"/>
+            </Grid>
             <CheckBox Margin="5" Content="Перемещать фотографии" IsChecked="{Binding MoveFiles, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ProcessNotStarted, Mode=OneWay}"/>
             <Grid>
                 <Grid.ColumnDefinitions>

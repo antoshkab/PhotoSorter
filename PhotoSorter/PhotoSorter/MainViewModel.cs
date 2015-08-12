@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
@@ -27,19 +28,6 @@ namespace PhotoSorter
                 OnPropertyChanged();
                 OnPropertyChanged("IsValid");
                 ConfigurationManager.AppSettings.Set("PhotoPath", _photoPath);
-            }
-        }
-
-        private bool _createByMonth;
-
-        public bool CreateByMonth
-        {
-            get { return _createByMonth; }
-            set
-            {
-                _createByMonth = value;
-                OnPropertyChanged();
-                ConfigurationManager.AppSettings.Set("CreateByMonth", _createByMonth.ToString());
             }
         }
 
@@ -85,7 +73,28 @@ namespace PhotoSorter
             get
             {
                 return !string.IsNullOrWhiteSpace(PhotoPath) && Directory.Exists(PhotoPath) &&
-                       !string.IsNullOrWhiteSpace(SavePath) && Directory.Exists(SavePath);
+                       !string.IsNullOrWhiteSpace(SavePath) && Directory.Exists(SavePath) &&
+                       !string.IsNullOrWhiteSpace(DirMask) && !DirMask.ToCharArray().Any(ch => Path.GetInvalidPathChars().Contains(ch));
+            }
+        }
+
+        public string SampleDirName
+        {
+            get { return DateTime.Now.ToString(_dirMask); }
+        }
+
+        private string _dirMask;
+
+        public string DirMask
+        {
+            get { return _dirMask; }
+            set
+            {
+                _dirMask = value;
+                OnPropertyChanged();
+                OnPropertyChanged("SampleDirName");
+                OnPropertyChanged("IsValid");
+                ConfigurationManager.AppSettings.Set("DirMask", _dirMask);
             }
         }
 
@@ -133,7 +142,7 @@ namespace PhotoSorter
 
             ProcessedFiles = new ObservableCollection<string>();
             _photoPath = ConfigurationManager.AppSettings["PhotoPath"];
-            _createByMonth = Convert.ToBoolean(ConfigurationManager.AppSettings["CreateByMonth"]);
+            _dirMask = ConfigurationManager.AppSettings["DirMask"];
             _savePath = ConfigurationManager.AppSettings["SavePath"];
             _moveFiles = Convert.ToBoolean(ConfigurationManager.AppSettings["MoveFiles"]);
         }
@@ -251,12 +260,12 @@ namespace PhotoSorter
                     var dt = Convert.ToDateTime(bitmapMetadata.DateTaken);
                     photo.Flush();
                     photo.Close();
-                    return _createByMonth ? dt.ToString("MM.yyyy") : dt.ToString("yyyy");
+                    return dt.ToString(_dirMask);
                 }
                 photo.Flush();
                 photo.Close();
                 var fi = new FileInfo(filePath);
-                return _createByMonth ? fi.CreationTime.ToString("MM.yyyy") : fi.CreationTime.ToString("yyyy");
+                return fi.CreationTime.ToString(_dirMask);
             }
         }
     }
