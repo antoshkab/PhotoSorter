@@ -8,9 +8,41 @@
         d:DataContext="{d:DesignInstance {x:Type viewModels:MainViewModel}}"
         Title="Сортировка фотографий" Height="480" Width="640">
     <Window.TaskbarItemInfo>
-        <TaskbarItemInfo ProgressState="{Binding TaskbarItemProgressState, Mode=OneWay}" ProgressValue="{Binding ProcessValue, Mode=OneWay}"/>
+        <TaskbarItemInfo ProgressState="{Binding TaskbarItemProgressState, Mode=OneWay}" ProgressValue="{Binding ProgressPrecent, Mode=OneWay}"/>
     </Window.TaskbarItemInfo>
     <DockPanel Margin="30">
-        
+        <StackPanel DockPanel.Dock="Top">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="32"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" HorizontalAlignment="Left">Путь к фотографиям:</Label>
+                <TextBox Text="{Binding PhotoPath, Mode=OneWay}" Grid.Column="1" IsReadOnly="True"/>
+                <Button Command="{Binding SelectPhotoPathCommand}" Content="..." ToolTip="Выбрать путь, где находятся фотографии" Grid.Column="2"/>
+            </Grid>
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="32"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" HorizontalAlignment="Left">Путь к сохранению:</Label>
+                <TextBox Text="{Binding SavePath, Mode=OneWay}" Grid.Column="1" IsReadOnly="True"/>
+                <Button Command="{Binding SelectSavePathCommand}" Content="..." ToolTip="Выбрать путь, куда фотографии перенесутся" Grid.Column="2"/>
+            </Grid>
+            <CheckBox Margin="5" Content="Создать папки по месяцам (MM.yyyy (04.2000))" IsChecked="{Binding CreateByMonth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="Старт" Margin="10" Command="{Binding StartProcessingCommand}"/>
+                <Button Grid.Column="1" Content="Стоп" Margin="10" Command="{Binding StopProcessingCommand}"/>
+            </Grid>
+            <ProgressBar Value="{Binding ProgressPrecent, Mode=OneWay}" Height="24" Maximum="100" Minimum="0" Margin="10"/>
+        </StackPanel>
+        <ListBox DockPanel.Dock="Bottom" ItemsSource="{Binding ProcessedFiles, Mode=OneWay}"/>
     </DockPanel>
 </Window>
