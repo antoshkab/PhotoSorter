@@ -7,6 +7,9 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type viewModels:MainViewModel}}"
         Title="Сортировка фотографий" Height="480" Width="640" MinHeight="480" MinWidth="640">
+    <Window.DataContext>
+        <viewModels:MainViewModel/>
+    </Window.DataContext>
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo ProgressState="{Binding TaskbarItemProgressState, Mode=OneWay}" ProgressValue="{Binding ProgressPrecent, Mode=OneWay}"/>
     </Window.TaskbarItemInfo>
@@ -32,7 +35,8 @@
                 <TextBox Text="{Binding SavePath, Mode=OneWay}" Grid.Column="1" IsReadOnly="True"/>
                 <Button Command="{Binding SelectSavePathCommand}" Content="..." ToolTip="Выбрать путь, куда фотографии перенесутся" Grid.Column="2"/>
             </Grid>
-            <CheckBox Margin="5" Content="Создать папки по месяцам (MM.yyyy (04.2000))" IsChecked="{Binding CreateByMonth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <CheckBox Margin="5" Content="Создать папки по месяцам (MM.yyyy (04.2000))" IsChecked="{Binding CreateByMonth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ProcessNotStarted, Mode=OneWay}"/>
+            <CheckBox Margin="5" Content="Перемещать фотографии" IsChecked="{Binding MoveFiles, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ProcessNotStarted, Mode=OneWay}"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>

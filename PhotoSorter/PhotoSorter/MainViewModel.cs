@@ -55,19 +55,32 @@ namespace PhotoSorter
             }
         }
 
+        private bool _moveFiles;
+
+        public bool MoveFiles
+        {
+            get { return _moveFiles; }
+            set
+            {
+                _moveFiles = value;
+                OnPropertyChanged();
+                ConfigurationManager.AppSettings.Set("MoveFiles", _moveFiles.ToString());
+            }
+        }
+
         public bool ProcessStarted
         {
             get { return _backgroundWorker.IsBusy; }
         }
 
-        public int ProgressPrecent { get; private set; }
-
-        private int _fileCount;
-
-        public int FileCount
+        public bool ProcessNotStarted
         {
-            get { return _fileCount; }
+            get { return !ProcessStarted; }
         }
+
+        public double ProgressPrecent { get; private set; }
+
+        private double _fileCount;
 
         public TaskbarItemProgressState TaskbarItemProgressState { get; private set; }
 
@@ -109,6 +122,7 @@ namespace PhotoSorter
             _photoPath = ConfigurationManager.AppSettings["PhotoPath"];
             _createByMonth = Convert.ToBoolean(ConfigurationManager.AppSettings["CreateByMonth"]);
             _savePath = ConfigurationManager.AppSettings["SavePath"];
+            _moveFiles = Convert.ToBoolean(ConfigurationManager.AppSettings["MoveFiles"]);
         }
 
         private void BackgroundWorkerOnRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -120,8 +134,8 @@ namespace PhotoSorter
             ProgressPrecent = 0;
             OnPropertyChanged("ProgressPrecent");
             _fileCount = 0;
-            OnPropertyChanged("FileCount");
             OnPropertyChanged("ProcessStarted");
+            OnPropertyChanged("ProcessNotStarted");
         }
 
         private void StartProcessing()
@@ -130,6 +144,7 @@ namespace PhotoSorter
             OnPropertyChanged("TaskbarItemProgressState");
             _backgroundWorker.RunWorkerAsync();
             OnPropertyChanged("ProcessStarted");
+            OnPropertyChanged("ProcessNotStarted");
         }
 
         private void StopProcessing()
@@ -173,7 +188,7 @@ namespace PhotoSorter
                 return;
             }
 
-            ProgressPrecent = e.ProgressPercentage;
+            ProgressPrecent = e.ProgressPercentage/_fileCount * 100d;
             OnPropertyChanged("ProgressPrecent");
         }
 
@@ -191,9 +206,11 @@ namespace PhotoSorter
                 var path = Path.Combine(SavePath, GetFolderName(files[i].FullName));
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
-                File.Move(files[i].FullName, Path.Combine(path, files[i].Name));
-                var pct = (i + 1/_fileCount) * 100;
-                _backgroundWorker.ReportProgress(pct);
+                if (_moveFiles)
+                    File.Move(files[i].FullName, Path.Combine(path, files[i].Name));
+                else
+                    File.Copy(files[i].FullName, Path.Combine(path, files[i].Name), false);
+                _backgroundWorker.ReportProgress(i + 1);
                 ProcessedFiles.Add(files[i].Name);
             }
         }
