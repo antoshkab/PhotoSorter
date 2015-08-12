@@ -23,7 +23,9 @@
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" HorizontalAlignment="Left">Путь к фотографиям:</Label>
                 <TextBox Text="{Binding PhotoPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" IsReadOnly="{Binding ProcessStarted}"/>
-                <Button Command="{Binding SelectPhotoPathCommand}" Content="..." ToolTip="Выбрать путь, где находятся фотографии" Grid.Column="2"/>
+                <Button Command="{Binding SelectPhotoPathCommand}" ToolTip="Выбрать путь, где находятся фотографии" Grid.Column="2" Height="24" Width="24"> 
+                    <Image Source="Images/folders_explorer.png"></Image>
+                </Button>
             </Grid>
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>
@@ -33,7 +35,9 @@
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" HorizontalAlignment="Left">Путь к сохранению:</Label>
                 <TextBox Text="{Binding SavePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" IsReadOnly="{Binding ProcessStarted}"/>
-                <Button Command="{Binding SelectSavePathCommand}" Content="..." ToolTip="Выбрать путь, куда фотографии перенесутся" Grid.Column="2"/>
+                <Button Command="{Binding SelectSavePathCommand}" ToolTip="Выбрать путь, куда фотографии перенесутся" Grid.Column="2" Height="24" Width="24">
+                    <Image Source="Images/folders_explorer.png"></Image>
+                </Button>
             </Grid>
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>
@@ -59,10 +63,20 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="Старт" Margin="10" Command="{Binding StartProcessingCommand}"/>
-                <Button Grid.Column="1" Content="Стоп" Margin="10" Command="{Binding StopProcessingCommand}"/>
+                <Button Grid.Column="0" Margin="5" Command="{Binding StartProcessingCommand}" HorizontalContentAlignment="Center" Height="24">
+                    <StackPanel Orientation="Horizontal" Margin="5,0,5,0">
+                        <Image Source="Images/cog_go.png" Margin="5,0,5,0"/>
+                        <TextBlock Text="Запуск" Margin="5,0,5,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Grid.Column="1" Margin="5" Command="{Binding StopProcessingCommand}" HorizontalContentAlignment="Center" Height="24">
+                    <StackPanel Orientation="Horizontal" Margin="5,0,5,0">
+                        <Image Source="Images/stop.png" Margin="5,0,5,0"/>
+                        <TextBlock Text="Стоп" Margin="5,0,5,0"/>
+                    </StackPanel>
+                </Button>
             </Grid>
-            <ProgressBar Value="{Binding ProgressValue, Mode=OneWay}" Height="24" Maximum="100" Minimum="0" Margin="10"/>
+            <ProgressBar Value="{Binding ProgressValue, Mode=OneWay}" Height="24" Maximum="100" Minimum="0" Margin="5"/>
         </StackPanel>
         <ListBox DockPanel.Dock="Bottom" ItemsSource="{Binding ProcessedFiles, Mode=OneWay}"/>
     </DockPanel>
