@@ -4,6 +4,13 @@
              xmlns:resx="clr-namespace:PhotoSorter.Properties"
              StartupUri="MainView.xaml">
     <Application.Resources>
-        <resx:Resources x:Key="Resources"/>
+        <ResourceDictionary>
+            <resx:Resources x:Key="Resources"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Theme/Core.xaml"/>
+                <ResourceDictionary Source="Theme/Brushes.xaml"/>
+                <ResourceDictionary Source="Theme/Icons.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

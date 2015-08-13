@@ -6,7 +6,7 @@
         xmlns:viewModels="clr-namespace:PhotoSorter"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type viewModels:MainViewModel}}"
-        Title="Сортировка фотографий" Height="480" Width="640" MinHeight="480" MinWidth="640">
+        Background="#333" Title="Сортировка фотографий" Height="480" Width="640" MinHeight="480" MinWidth="640">
     <Window.DataContext>
         <viewModels:MainViewModel/>
     </Window.DataContext>
@@ -15,47 +15,51 @@
     </Window.TaskbarItemInfo>
     <DockPanel Margin="30">
         <StackPanel DockPanel.Dock="Top">
-            <Grid Margin="5">
+            <Grid Margin="5" VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="130"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="32"/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" HorizontalAlignment="Left">Путь к фотографиям:</Label>
-                <TextBox Text="{Binding PhotoPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" IsReadOnly="{Binding ProcessStarted}"/>
-                <Button Command="{Binding SelectPhotoPathCommand}" ToolTip="Выбрать путь, где находятся фотографии" Grid.Column="2" Height="24" Width="24"> 
-                    <Image Source="Images/folders_explorer.png"></Image>
+                <Label Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">Путь к фотографиям:</Label>
+                <TextBox Text="{Binding PhotoPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" IsReadOnly="{Binding ProcessStarted}" Margin="0,0,5,0"/>
+                <Button Command="{Binding SelectPhotoPathCommand}" ToolTip="Выбрать путь, где находятся фотографии" Grid.Column="2"> 
+                    <Viewbox>
+                        <Path Stretch="Fill" Data="{StaticResource folder_ellipsisStyle0}" Margin="5" Stroke="#FF2CC8C8"/>
+                    </Viewbox>
                 </Button>
             </Grid>
-            <Grid Margin="5">
+            <Grid Margin="5" VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="130"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="32"/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" HorizontalAlignment="Left">Путь к сохранению:</Label>
-                <TextBox Text="{Binding SavePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" IsReadOnly="{Binding ProcessStarted}"/>
-                <Button Command="{Binding SelectSavePathCommand}" ToolTip="Выбрать путь, куда фотографии перенесутся" Grid.Column="2" Height="24" Width="24">
-                    <Image Source="Images/folders_explorer.png"></Image>
+                <Label Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">Путь к сохранению:</Label>
+                <TextBox Text="{Binding SavePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" IsReadOnly="{Binding ProcessStarted}" Margin="0,0,5,0" />
+                <Button Command="{Binding SelectSavePathCommand}" ToolTip="Выбрать путь, куда фотографии перенесутся" Grid.Column="2">
+                    <Viewbox>
+                        <Path Stretch="Fill" Data="{StaticResource folder_ellipsisStyle0}" Margin="5" Stroke="#FF2CC8C8"/>
+                    </Viewbox>
                 </Button>
             </Grid>
-            <Grid Margin="5">
+            <Grid Margin="5" VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="130"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" HorizontalAlignment="Left">Расширение файла:</Label>
-                <TextBox Text="{Binding ExtensionFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" ToolTip="Для нескольких расширений, разделить ;"/>
+                <Label Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">Расширение файла:</Label>
+                <TextBox Text="{Binding ExtensionFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" ToolTip="Для нескольких расширений, разделить ;" />
             </Grid>
-            <Grid Margin="5">
+            <Grid Margin="5" VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="160"/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" HorizontalAlignment="Left">Маска наименовая папки:</Label>
+                <Label Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">Маска наименовая папки:</Label>
                 <TextBox Text="{Binding DirMask, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" ToolTip="{Binding DirMaskToolTip, Source={StaticResource Resources}, Mode=OneTime}"/>
-                <TextBlock Text="{Binding SampleDirName, Mode=OneWay}" Grid.Column="2" TextAlignment="Center" Margin="10,0,0,0"/>
+                <TextBlock Text="{Binding SampleDirName, Mode=OneWay}" Grid.Column="2" TextAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
             </Grid>
             <CheckBox Margin="5" Content="Перемещать фотографии" IsChecked="{Binding MoveFiles, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ProcessNotStarted, Mode=OneWay}"/>
             <Grid>
@@ -63,21 +67,47 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Margin="5" Command="{Binding StartProcessingCommand}" HorizontalContentAlignment="Center" Height="24">
+                <Button Grid.Column="0" Margin="5" Command="{Binding StartProcessingCommand}" HorizontalContentAlignment="Center">
                     <StackPanel Orientation="Horizontal" Margin="5,0,5,0">
-                        <Image Source="Images/cog_go.png" Margin="5,0,5,0"/>
-                        <TextBlock Text="Запуск" Margin="5,0,5,0"/>
+                        <Viewbox>
+                            <Path Stretch="Fill" Data="{StaticResource playStyle0}" Margin="5" Stroke="#FF2CC8C8"></Path>
+                        </Viewbox>
+                        <TextBlock Text="Запуск" Margin="5,0,5,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button Grid.Column="1" Margin="5" Command="{Binding StopProcessingCommand}" HorizontalContentAlignment="Center" Height="24">
+                <Button Grid.Column="1" Margin="5" Command="{Binding StopProcessingCommand}" HorizontalContentAlignment="Center">
                     <StackPanel Orientation="Horizontal" Margin="5,0,5,0">
-                        <Image Source="Images/stop.png" Margin="5,0,5,0"/>
-                        <TextBlock Text="Стоп" Margin="5,0,5,0"/>
+                        <Viewbox>
+                            <Path Stretch="Fill" Data="{StaticResource stopStyle0}" Margin="5" Stroke="#FF2CC8C8"></Path>
+                        </Viewbox>
+                        <TextBlock Text="Стоп" Margin="5,0,5,0" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </Grid>
             <ProgressBar Value="{Binding ProgressValue, Mode=OneWay}" Height="24" Maximum="100" Minimum="0" Margin="5"/>
         </StackPanel>
         <ListBox DockPanel.Dock="Bottom" ItemsSource="{Binding ProcessedFiles, Mode=OneWay}"/>
+        <DockPanel.Resources>
+            <Style TargetType="Label">
+                <Setter Property="Foreground">
+                    <Setter.Value>
+                        <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
+                            <GradientStop Color="#FF97E9E9" Offset="1"/>
+                            <GradientStop Color="#FF2CC8C8"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="TextBlock">
+                <Setter Property="Foreground">
+                    <Setter.Value>
+                        <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
+                            <GradientStop Color="#FF97E9E9" Offset="1"/>
+                            <GradientStop Color="#FF2CC8C8"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </DockPanel.Resources>
     </DockPanel>
 </Window>
