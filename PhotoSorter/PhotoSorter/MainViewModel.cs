@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
+using System.Windows.Threading;
 using PhotoSorter.Properties;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
@@ -30,7 +31,7 @@ namespace PhotoSorter
             {
                 _photoPath = value;
                 OnPropertyChanged();
-                OnPropertyChanged("IsValid");
+                OnPropertyChanged(nameof(IsValid));
                 Settings.Default.PhotoPath = value;
                 Settings.Default.Save();
             }
@@ -45,7 +46,7 @@ namespace PhotoSorter
             {
                 _savePath = value;
                 OnPropertyChanged();
-                OnPropertyChanged("IsValid");
+                OnPropertyChanged(nameof(IsValid));
                 Settings.Default.SavePath = value;
                 Settings.Default.Save();
             }
@@ -67,12 +68,28 @@ namespace PhotoSorter
 
         public bool ProcessStarted
         {
-            get { return _backgroundWorker.IsBusy; }
+            get
+            {
+                return _processStarted;
+            }
+            private set
+            {
+                _processStarted = value;
+                OnPropertyChanged();
+            }
         }
 
         public bool ProcessNotStarted
         {
-            get { return !ProcessStarted; }
+            get
+            {
+                return _processNotStarted;
+            }
+            private set
+            {
+                _processNotStarted = value;
+                OnPropertyChanged();
+            }
         }
 
         public bool IsValid
@@ -94,12 +111,12 @@ namespace PhotoSorter
                 try
                 {
                     if (DirMask.ToCharArray().Any(ch => Path.GetInvalidPathChars().Contains(ch)))
-                        throw new FormatException();
-                    return string.Format("Пример: {0}", DateTime.Now.ToString(_dirMask));
+                        throw new FormatException("Содержаться некорректные символы");
+                    return $"Пример: {DateTime.Now.ToString(_dirMask)}";
                 }
                 catch
                 {
-                    return "Некорректная маска";
+                    return Resources.NotCorrectMask;
                 }
             }
         }
@@ -113,25 +130,50 @@ namespace PhotoSorter
             {
                 _dirMask = value;
                 OnPropertyChanged();
-                OnPropertyChanged("SampleDirName");
-                OnPropertyChanged("IsValid");
+                OnPropertyChanged(nameof(SampleDirName));
+                OnPropertyChanged(nameof(IsValid));
                 Settings.Default.DirMask = value;
                 Settings.Default.Save();
             }
         }
 
-        public double ProgressPrecent
+        public double ProgressPrecent => ProgressValue != 0 ? ProgressValue / 100 : 0;
+
+        public double ProgressValue
         {
-            get { return ProgressValue != 0 ? ProgressValue / 100 : 0; }
+            get
+            {
+                return _progressValue;
+            }
+            private set
+            {
+                _progressValue = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ProgressPrecent));
+            }
+        }
+        private double _fileCount;
+        public TaskbarItemProgressState TaskbarItemProgressState
+        {
+            get
+            {
+                return _taskbarItemProgressState;
+            }
+            private set
+            {
+                _taskbarItemProgressState = value;
+                OnPropertyChanged();
+            }
         }
 
-        public double ProgressValue { get; private set; }
-        private double _fileCount;
-        public TaskbarItemProgressState TaskbarItemProgressState { get; private set; }
-        public ObservableCollection<string> ProcessedFiles { get; private set; }
-        private readonly BackgroundWorker _backgroundWorker;
+        public ObservableCollection<string> ProcessedFiles { get; }
         private bool _needStop;
         private string _extensionFilter;
+        private bool _processStarted;
+        private bool _processNotStarted;
+        private double _progressValue;
+        private TaskbarItemProgressState _taskbarItemProgressState;
+        private bool _searchInSubFolder;
 
         public ActionCommand SelectPhotoPathCommand
         {
@@ -162,7 +204,23 @@ namespace PhotoSorter
             {
                 _extensionFilter = value;
                 OnPropertyChanged();
-                ConfigurationManager.AppSettings.Set("ExtensionFilter", _extensionFilter);
+                Settings.Default.ExtensionFilter = value;
+                Settings.Default.Save();
+            }
+        }
+
+        public bool SearchInSubFolder
+        {
+            get
+            {
+                return _searchInSubFolder;
+            }
+            set
+            {
+                _searchInSubFolder = value;
+                OnPropertyChanged();
+                Settings.Default.SearchInSubFolder = value;
+                Settings.Default.Save();
             }
         }
 
@@ -172,13 +230,6 @@ namespace PhotoSorter
 
         public MainViewModel()
         {
-            _backgroundWorker = new BackgroundWorker();
-            _backgroundWorker.WorkerReportsProgress = true;
-            _backgroundWorker.WorkerSupportsCancellation = true;
-            _backgroundWorker.DoWork += BackgroundWorkerOnDoWork;
-            _backgroundWorker.ProgressChanged += BackgroundWorkerOnProgressChanged;
-            _backgroundWorker.RunWorkerCompleted += BackgroundWorkerOnRunWorkerCompleted;
-
             ProcessedFiles = new ObservableCollection<string>();
             _photoPath = Settings.Default.PhotoPath;
             _dirMask = Settings.Default.DirMask;
@@ -193,9 +244,7 @@ namespace PhotoSorter
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
 
@@ -234,7 +283,7 @@ namespace PhotoSorter
         {
             using (var dlg = new FolderBrowserDialog())
             {
-                dlg.Description = "Выбор папки с фотографиями";
+                dlg.Description = Resources.SelectPhotoPath;
                 dlg.ShowNewFolderButton = true;
                 dlg.SelectedPath = PhotoPath;
                 var oldWindow = new OldWindow(new WindowInteropHelper(Application.Current.MainWindow).Handle);
@@ -249,7 +298,7 @@ namespace PhotoSorter
         {
             using (var dlg = new FolderBrowserDialog())
             {
-                dlg.Description = "Выбор папки для сохранения фотографий";
+                dlg.Description = Resources.SelectSavePhotoPath;
                 dlg.ShowNewFolderButton = true;
                 dlg.SelectedPath = SavePath;
                 var oldWindow = new OldWindow(new WindowInteropHelper(Application.Current.MainWindow).Handle);
@@ -260,14 +309,21 @@ namespace PhotoSorter
         }
 
 
-        private void StartProcessing()
+        private async void StartProcessing()
         {
             ProcessedFiles.Clear();
             TaskbarItemProgressState = TaskbarItemProgressState.Normal;
-            OnPropertyChanged("TaskbarItemProgressState");
-            _backgroundWorker.RunWorkerAsync();
-            OnPropertyChanged("ProcessStarted");
-            OnPropertyChanged("ProcessNotStarted");
+            OnPropertyChanged(nameof(TaskbarItemProgressState));
+            ProcessStarted = true;
+            ProcessNotStarted = false;
+            await StartSortingAsync();
+            TaskbarItemProgressState = TaskbarItemProgressState.None;
+            ProgressValue = 0;
+            _fileCount = 0;
+            ProcessStarted = false;
+            ProcessNotStarted = true;
+            MessageBox.Show(Resources.SortComplite, Application.Current.MainWindow.Title, MessageBoxButton.OK,
+                    MessageBoxImage.Information);
         }
 
 
@@ -280,18 +336,23 @@ namespace PhotoSorter
 
         #region HandlesEvent
 
-        private void BackgroundWorkerOnDoWork(object sender, DoWorkEventArgs e)
+        private Task StartSortingAsync()
+        {
+            return Task.Factory.StartNew(RunSorting, TaskCreationOptions.LongRunning);
+        }
+
+        private void RunSorting()
         {
             _needStop = false;
             var dirInfo = new DirectoryInfo(PhotoPath);
             var files = new List<FileInfo>();
-            var extensions = _extensionFilter.Split(new char[]
-                                                    {
-                                                            ';'
-                                                    }, StringSplitOptions.RemoveEmptyEntries);
+            var extensions = _extensionFilter.Split(new[]
+            {
+                ';'
+            }, StringSplitOptions.RemoveEmptyEntries);
             if (!extensions.Any())
                 return;
-            Array.ForEach(extensions, ext => files.AddRange(dirInfo.GetFiles(ext, SearchOption.AllDirectories)));
+            Array.ForEach(extensions, ext => files.AddRange(dirInfo.GetFiles(ext, SearchInSubFolder ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)));
             _fileCount = files.Count;
             for (var i = 0; i < files.Count; i++)
             {
@@ -309,35 +370,18 @@ namespace PhotoSorter
                 }
                 catch (Exception ex)
                 {
-                    _backgroundWorker.ReportProgress(i + 1, string.Format("{0} {1}", ex.Message, files[i].Name));
+                    ReportProgress(i + 1, ex.Message);
                     continue;
                 }
-                _backgroundWorker.ReportProgress(i + 1, files[i].Name);
+                ReportProgress(i + 1, files[i].Name);
             }
         }
 
 
-        private void BackgroundWorkerOnProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void ReportProgress(int progressPrecent, string fileName)
         {
-            ProgressValue = e.ProgressPercentage / _fileCount * 100d;
-            OnPropertyChanged("ProgressValue");
-            OnPropertyChanged("ProgressPrecent");
-            ProcessedFiles.Add(e.UserState.ToString());
-        }
-
-
-        private void BackgroundWorkerOnRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            MessageBox.Show("Сортировка завершена.", Application.Current.MainWindow.Title, MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-            TaskbarItemProgressState = TaskbarItemProgressState.None;
-            OnPropertyChanged("TaskbarItemProgressState");
-            ProgressValue = 0;
-            OnPropertyChanged("ProgressPrecent");
-            OnPropertyChanged("ProgressValue");
-            _fileCount = 0;
-            OnPropertyChanged("ProcessStarted");
-            OnPropertyChanged("ProcessNotStarted");
+            ProgressValue = progressPrecent / _fileCount * 100d;
+            Application.Current.Dispatcher.Invoke(() => ProcessedFiles.Add(fileName), DispatcherPriority.DataBind);
         }
 
         #endregion

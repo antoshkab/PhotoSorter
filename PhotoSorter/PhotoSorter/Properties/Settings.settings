@@ -6,7 +6,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="MoveFiles" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="SavePath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -16,6 +16,9 @@
     </Setting>
     <Setting Name="ExtensionFilter" Type="System.String" Scope="User">
       <Value Profile="(Default)">*.jpg</Value>
+    </Setting>
+    <Setting Name="SearchInSubFolder" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

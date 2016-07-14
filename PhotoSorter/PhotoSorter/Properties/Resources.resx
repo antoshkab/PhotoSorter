@@ -130,4 +130,16 @@ yyy - Год в виде как минимум трех цифр.
 yyyy - Год в виде четырехзначного числа.
 "строка" или 'строка' - Буквенный разделитель строк.</value>
   </data>
+  <data name="NotCorrectMask" xml:space="preserve">
+    <value>Некорректная маска</value>
+  </data>
+  <data name="SelectPhotoPath" xml:space="preserve">
+    <value>Выбор папки с фотографиями</value>
+  </data>
+  <data name="SelectSavePhotoPath" xml:space="preserve">
+    <value>Выбор папки для сохранения фотографий</value>
+  </data>
+  <data name="SortComplite" xml:space="preserve">
+    <value>Сортировка завершена.</value>
+  </data>
 </root>

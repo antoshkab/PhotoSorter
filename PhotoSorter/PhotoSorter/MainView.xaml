@@ -6,7 +6,7 @@
         xmlns:viewModels="clr-namespace:PhotoSorter"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type viewModels:MainViewModel}}"
-        Background="#333" Title="Сортировка фотографий" Height="480" Width="640" MinHeight="480" MinWidth="640">
+        Background="#333" Title="Сортировка фотографий" Height="600" Width="800" MinHeight="480" MinWidth="640">
     <Window.DataContext>
         <viewModels:MainViewModel/>
     </Window.DataContext>
@@ -48,9 +48,10 @@
                     <ColumnDefinition Width="130"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">Расширение файла:</Label>
+                <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">Расширение файла:</Label>
                 <TextBox Text="{Binding ExtensionFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" ToolTip="Для нескольких расширений, разделить ;" />
             </Grid>
+            <CheckBox Margin="5" Content="Искать в вложенных папках" IsChecked="{Binding SearchInSubFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ProcessNotStarted, Mode=OneWay}"/>
             <Grid Margin="5" VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="160"/>
