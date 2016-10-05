@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoSorter", "PhotoSorter\PhotoSorter.csproj", "{4AFEE9C3-A921-44D7-8ADE-904BB995478E}"
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "PhotoSorterSetup", "PhotoSorterSetup\PhotoSorterSetup.wixproj", "{047DFEAD-9AAF-4E15-8354-BB4950522A66}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Installer", "Installer\Installer.csproj", "{024AC083-D497-40D4-B45D-E43AC1B0514D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,12 +23,14 @@ Global
 		{4AFEE9C3-A921-44D7-8ADE-904BB995478E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4AFEE9C3-A921-44D7-8ADE-904BB995478E}.Release|x86.ActiveCfg = Release|Any CPU
 		{4AFEE9C3-A921-44D7-8ADE-904BB995478E}.Release|x86.Build.0 = Release|Any CPU
-		{047DFEAD-9AAF-4E15-8354-BB4950522A66}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{047DFEAD-9AAF-4E15-8354-BB4950522A66}.Debug|x86.ActiveCfg = Debug|x86
-		{047DFEAD-9AAF-4E15-8354-BB4950522A66}.Debug|x86.Build.0 = Debug|x86
-		{047DFEAD-9AAF-4E15-8354-BB4950522A66}.Release|Any CPU.ActiveCfg = Release|x86
-		{047DFEAD-9AAF-4E15-8354-BB4950522A66}.Release|x86.ActiveCfg = Release|x86
-		{047DFEAD-9AAF-4E15-8354-BB4950522A66}.Release|x86.Build.0 = Release|x86
+		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Debug|x86.Build.0 = Debug|Any CPU
+		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Release|x86.ActiveCfg = Release|Any CPU
+		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
