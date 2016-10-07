@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoSorter", "PhotoSorter\PhotoSorter.csproj", "{4AFEE9C3-A921-44D7-8ADE-904BB995478E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Installer", "Installer\Installer.csproj", "{024AC083-D497-40D4-B45D-E43AC1B0514D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoSorterSetup", "PhotoSorterSetup\PhotoSorterSetup.csproj", "{C9A243E5-6443-4A00-ACAC-C20A61286264}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +23,14 @@ Global
 		{4AFEE9C3-A921-44D7-8ADE-904BB995478E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4AFEE9C3-A921-44D7-8ADE-904BB995478E}.Release|x86.ActiveCfg = Release|Any CPU
 		{4AFEE9C3-A921-44D7-8ADE-904BB995478E}.Release|x86.Build.0 = Release|Any CPU
-		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Debug|x86.Build.0 = Debug|Any CPU
-		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Release|x86.ActiveCfg = Release|Any CPU
-		{024AC083-D497-40D4-B45D-E43AC1B0514D}.Release|x86.Build.0 = Release|Any CPU
+		{C9A243E5-6443-4A00-ACAC-C20A61286264}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9A243E5-6443-4A00-ACAC-C20A61286264}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9A243E5-6443-4A00-ACAC-C20A61286264}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C9A243E5-6443-4A00-ACAC-C20A61286264}.Debug|x86.Build.0 = Debug|Any CPU
+		{C9A243E5-6443-4A00-ACAC-C20A61286264}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9A243E5-6443-4A00-ACAC-C20A61286264}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9A243E5-6443-4A00-ACAC-C20A61286264}.Release|x86.ActiveCfg = Release|Any CPU
+		{C9A243E5-6443-4A00-ACAC-C20A61286264}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{024AC083-D497-40D4-B45D-E43AC1B0514D}</ProjectGuid>
+    <ProjectGuid>{C9A243E5-6443-4A00-ACAC-C20A61286264}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Installer</RootNamespace>
-    <AssemblyName>Installer</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>PhotoSorterSetup</RootNamespace>
+    <AssemblyName>WixSharpSetup</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BootstrapperCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
@@ -44,14 +46,18 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="WixSharp, Version=1.0.44.0, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
       <HintPath>..\packages\WixSharp.bin.1.0.44.0\lib\WixSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WixSharp.Lab, Version=1.0.39.1, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
+      <HintPath>..\packages\WixSharp.Lab.1.0.40.0\lib\WixSharp.Lab.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WixSharp.Msi, Version=1.0.41.2, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
@@ -66,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="wix\$(ProjectName).g.wxs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -87,8 +94,4 @@
   </Target>
   -->
   <UsingTask AssemblyFile="$(SolutionDir)packages\WixSharp.1.0.44.0\build\SetEnvVar.dll" TaskName="SetEnvVar" />
-  <PropertyGroup>
-    <PostBuildEvent>cd "$(ProjectDir)"
-"$(TargetPath)"</PostBuildEvent>
-  </PropertyGroup>
 </Project>
