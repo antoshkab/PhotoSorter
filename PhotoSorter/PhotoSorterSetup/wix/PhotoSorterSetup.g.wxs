@@ -5,10 +5,12 @@
     Changes to this file will be lost if the code is regenerated.
 </auto-generated>
 -->
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="5e1eed8b-5ceb-4ee7-bd2d-b7a4cfa856c1" Name="PhotoSorter" Language="1049" Codepage="1251" Version="1.0.2.0" UpgradeCode="5e1eed8b-5ceb-4ee7-bd2d-b7a4bfa836c0" Manufacturer="Anton">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
+  <Product Id="5e1eed8b-5ceb-4ee7-bd2d-b7a4cfa836c4" Name="PhotoSorter" Language="1049" Codepage="1251" Version="1.0.0.3" UpgradeCode="5e1eed8b-5ceb-4ee7-bd2d-b7a4bfa836c0" Manufacturer="Anton">
     <Package InstallerVersion="200" Compressed="yes" SummaryCodepage="1251" Languages="1049" />
     <Media Id="1" Cabinet="PhotoSorter.cab" CompressionLevel="high" EmbedCab="yes" />
+
+    <Condition Message="Please install .Net FrameWork 4.5"><![CDATA[ (NETFRAMEWORK45 >= "#378389") ]]></Condition>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="LocalAppDataFolder" Name="LocalAppDataFolder">
@@ -44,11 +46,9 @@
         </Directory>
       </Directory>
 
-      <Directory Id="DesktopFolder" Name="DesktopFolder">
+      <Directory Id="ProgramMenuFolder" Name="ProgramMenuFolder">
 
-        <Component Id="PhotoSorter_" Guid="5e1eed8b-5ceb-4ee7-bd2d-b7a4019f6dfc">
-          <Shortcut Id="DesktopFolder.PhotoSorter_" WorkingDirectory="INSTALL_DIR" Target="[INSTALL_DIR]PhotoSorter.exe" Name="PhotoSorter.lnk" />
-
+        <Component Id="ProgramMenuFolder.EmptyDirectory" Guid="5e1eed8b-5ceb-4ee7-bd2d-b7a49ab36b0e">
           <CreateFolder />
 
           <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
@@ -58,9 +58,11 @@
 
       </Directory>
 
-      <Directory Id="ProgramMenuFolder" Name="ProgramMenuFolder">
+      <Directory Id="DesktopFolder" Name="DesktopFolder">
 
-        <Component Id="ProgramMenuFolder.EmptyDirectory" Guid="5e1eed8b-5ceb-4ee7-bd2d-b7a49ab36b0e">
+        <Component Id="PhotoSorter_" Guid="5e1eed8b-5ceb-4ee7-bd2d-b7a4019f6dfc">
+          <Shortcut Id="DesktopFolder.PhotoSorter_" WorkingDirectory="INSTALLDIR" Target="[INSTALLDIR]\PhotoSorter.exe" Name="PhotoSorter.lnk" />
+
           <CreateFolder />
 
           <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
@@ -77,9 +79,11 @@
 
     </Directory>
 
+    <PropertyRef Id="NETFRAMEWORK45" />
+
     <Upgrade Id="5e1eed8b-5ceb-4ee7-bd2d-b7a4bfa836c0">
-      <UpgradeVersion Minimum="0.0.0.0" Maximum="1.0.2.0" IncludeMinimum="yes" IncludeMaximum="no" Property="UPGRADEFOUND" />
-      <UpgradeVersion Minimum="1.0.2.0" IncludeMinimum="no" Property="NEWPRODUCTFOUND" />
+      <UpgradeVersion Minimum="0.0.0.0" Maximum="1.0.0.3" IncludeMinimum="yes" IncludeMaximum="no" Property="UPGRADEFOUND" />
+      <UpgradeVersion Minimum="1.0.0.3" IncludeMinimum="no" Property="NEWPRODUCTFOUND" />
     </Upgrade>
 
     <UI>
@@ -126,8 +130,8 @@
       <ComponentRef Id="Component.PhotoSorter.exe" />
       <ComponentRef Id="Component.PhotoSorter.exe.config" />
       <ComponentRef Id="Uninstall_PhotoSorter" />
-      <ComponentRef Id="PhotoSorter_" />
       <ComponentRef Id="ProgramMenuFolder.EmptyDirectory" />
+      <ComponentRef Id="PhotoSorter_" />
       <ComponentRef Id="TARGETDIR" />
     </Feature>
 
