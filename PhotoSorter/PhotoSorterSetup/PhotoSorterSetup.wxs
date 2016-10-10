@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <Product Id="5e1eed8b-5ceb-4ee7-bd2d-b7a4cfa836c4" Name="PhotoSorter" Language="1049" Codepage="1251" Version="1.0.0.3" UpgradeCode="5e1eed8b-5ceb-4ee7-bd2d-b7a4bfa836c0" Manufacturer="Anton">
-    <Package InstallerVersion="200" Compressed="yes" SummaryCodepage="1251" Languages="1049" />
+  <Product Id="5e1eed8b-5ceb-4ee7-bd2d-b7a4cfa856c1" Name="PhotoSorter" Language="1049" Codepage="1251" Version="1.0.2.0" UpgradeCode="5e1eed8b-5ceb-4ee7-bd2d-b7a4bfa836c0" Manufacturer="Anton">
+    <Package InstallerVersion="200" Compressed="yes" SummaryCodepage="1251" Languages="1049" InstallScope="perUser" />
     <Media Id="1" Cabinet="PhotoSorter.cab" CompressionLevel="high" EmbedCab="yes" />
 
     <Condition Message="Please install .Net FrameWork 4.5"><![CDATA[ (NETFRAMEWORK45 >= "#378389") ]]></Condition>
@@ -11,7 +11,10 @@
         <Directory Id="INSTALLDIR" Name="PhotoSorter">
 
           <Component Id="Component.PhotoSorter.exe" Guid="5e1eed8b-5ceb-4ee7-bd2d-b7a40eae2719">
-            <File Id="PhotoSorter.exe" Source="..\PhotoSorter\bin\Release\PhotoSorter.exe" />
+            <File Id="PhotoSorter.exe" Source="..\PhotoSorter\bin\Release\PhotoSorter.exe">
+              <Shortcut Id="Shortcut.PhotoSorter.exe.PhotoSorter_" WorkingDirectory="INSTALLDIR" Directory="DesktopFolder" Name="PhotoSorter.lnk" />
+              <Shortcut Id="Shortcut.PhotoSorter.exe.PhotoSorter.1" WorkingDirectory="INSTALLDIR" Directory="ProgramMenuFolder.PhotoSorter" Name="PhotoSorter.lnk" />
+            </File>
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
@@ -40,9 +43,9 @@
         </Directory>
       </Directory>
 
-      <Directory Id="ProgramMenuFolder" Name="ProgramMenuFolder">
+      <Directory Id="DesktopFolder" Name="DesktopFolder">
 
-        <Component Id="ProgramMenuFolder.EmptyDirectory" Guid="5e1eed8b-5ceb-4ee7-bd2d-b7a49ab36b0e">
+        <Component Id="DesktopFolder.EmptyDirectory" Guid="5e1eed8b-5ceb-4ee7-bd2d-b7a49d8f0e2a">
           <CreateFolder />
 
           <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
@@ -52,18 +55,19 @@
 
       </Directory>
 
-      <Directory Id="DesktopFolder" Name="DesktopFolder">
+      <Directory Id="ProgramMenuFolder" Name="ProgramMenuFolder">
+        <Directory Id="ProgramMenuFolder.PhotoSorter" Name="PhotoSorter">
 
-        <Component Id="PhotoSorter_" Guid="5e1eed8b-5ceb-4ee7-bd2d-b7a4019f6dfc">
-          <Shortcut Id="DesktopFolder.PhotoSorter_" WorkingDirectory="INSTALLDIR" Target="[INSTALLDIR]\PhotoSorter.exe" Name="PhotoSorter.lnk" />
+          <Component Id="PhotoSorter__.EmptyDirectory" Guid="5e1eed8b-5ceb-4ee7-bd2d-b7a44e130a7f">
+            <CreateFolder />
+            <RemoveFolder Id="ProgramMenuFolder.PhotoSorter" On="uninstall" />
 
-          <CreateFolder />
+            <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
+              <RegistryValue Value="0" Type="string" KeyPath="yes" />
+            </RegistryKey>
+          </Component>
 
-          <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
-            <RegistryValue Value="0" Type="string" KeyPath="yes" />
-          </RegistryKey>
-        </Component>
-
+        </Directory>
       </Directory>
 
       <Component Id="TARGETDIR" Guid="5e1eed8b-5ceb-4ee7-bd2d-b7a43278a633" KeyPath="yes">
@@ -76,8 +80,8 @@
     <PropertyRef Id="NETFRAMEWORK45" />
 
     <Upgrade Id="5e1eed8b-5ceb-4ee7-bd2d-b7a4bfa836c0">
-      <UpgradeVersion Minimum="0.0.0.0" Maximum="1.0.0.3" IncludeMinimum="yes" IncludeMaximum="no" Property="UPGRADEFOUND" />
-      <UpgradeVersion Minimum="1.0.0.3" IncludeMinimum="no" Property="NEWPRODUCTFOUND" />
+      <UpgradeVersion Minimum="0.0.0.0" Maximum="1.0.2.0" IncludeMinimum="yes" IncludeMaximum="no" Property="UPGRADEFOUND" />
+      <UpgradeVersion Minimum="1.0.2.0" IncludeMinimum="no" Property="NEWPRODUCTFOUND" />
     </Upgrade>
 
     <UI>
@@ -124,8 +128,8 @@
       <ComponentRef Id="Component.PhotoSorter.exe" />
       <ComponentRef Id="Component.PhotoSorter.exe.config" />
       <ComponentRef Id="Uninstall_PhotoSorter" />
-      <ComponentRef Id="ProgramMenuFolder.EmptyDirectory" />
-      <ComponentRef Id="PhotoSorter_" />
+      <ComponentRef Id="DesktopFolder.EmptyDirectory" />
+      <ComponentRef Id="PhotoSorter__.EmptyDirectory" />
       <ComponentRef Id="TARGETDIR" />
     </Feature>
 

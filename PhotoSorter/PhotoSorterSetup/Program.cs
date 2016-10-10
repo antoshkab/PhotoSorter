@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Win32;
 using WixSharp;
 using WixSharp.CommonTasks;
 using WixSharp.Controls;
@@ -10,31 +9,17 @@ namespace WixSharpSetup
     {
         static void Main()
         {
-            //DON'T FORGET to execute "Install-Package WixSharp" in the Package Manager Console
-
-            //KeyPath="yes"
             var project = new Project("PhotoSorter",
                              new Dir(new Id("INSTALLDIR"), @"%LocalAppData%\PhotoSorter",
-                                 new Files(@"..\PhotoSorter\bin\Release\*.*", f => !f.EndsWith(".pdb") && !f.Contains("vshost")),
+                                 new File(@"..\PhotoSorter\bin\Release\PhotoSorter.exe",
+                                    new FileShortcut("PhotoSorter", @"%Desktop%"),
+                                    new FileShortcut("PhotoSorter", @"%ProgramMenu%\PhotoSorter")),
+                                 new Files(@"..\PhotoSorter\bin\Release\*.*", f => !f.EndsWith(".pdb") && !f.Contains("vshost") && !f.EndsWith("PhotoSorter.exe")),
                                  new ExeFileShortcut("Uninstall PhotoSorter", "[System64Folder]msiexec.exe", "/x [ProductCode]")
                                  {
                                      WorkingDirectory = "%Temp%"
-                                 }),
-                             new Dir(@"%ProgramMenu%",
-                             new Dir("PhotoSorter", 
-                                new ExeFileShortcut("PhotoSorter", @"[INSTALLDIR]\PhotoSorter.exe", "")
-                                {
-                                    WorkingDirectory = "[INSTALLDIR]"
-                                },
-                                new ExeFileShortcut("Uninstall PhotoSorter", "[System64Folder]msiexec.exe", "/x [ProductCode]")
-                                {
-                                    WorkingDirectory = "%Temp%"
-                                })),
-                             new Dir(@"%Desktop%",
-                                new ExeFileShortcut("PhotoSorter", @"[INSTALLDIR]\PhotoSorter.exe", "")
-                                {
-                                    WorkingDirectory = "[INSTALLDIR]"
-                                }));
+                                 })
+                             );
             project.GUID = new Guid("{5E1EED8B-5CEB-4EE7-BD2D-B7A4BFA836C0}");
             project.Codepage = "1251";
             project.Language = "ru-RU";
@@ -43,6 +28,8 @@ namespace WixSharpSetup
             project.Media.EmbedCab = true;
             project.UI = WUI.WixUI_Common;
             project.MajorUpgradeStrategy = MajorUpgradeStrategy.Default;
+            project.InstallScope = InstallScope.perUser;
+
             var customUi = new CustomUI();
 
 
@@ -59,7 +46,7 @@ namespace WixSharpSetup
                                                              new ShowDialog(CommonDialogs.BrowseDlg));
 
             customUi.On(NativeDialogs.VerifyReadyDlg, Buttons.Back, new ShowDialog(NativeDialogs.InstallDirDlg, Condition.NOT_Installed),
-                                                              new ShowDialog(NativeDialogs.MaintenanceTypeDlg, Condition.Installed));
+                                                                    new ShowDialog(NativeDialogs.MaintenanceTypeDlg, Condition.Installed));
 
             customUi.On(NativeDialogs.MaintenanceWelcomeDlg, Buttons.Next, new ShowDialog(NativeDialogs.MaintenanceTypeDlg));
 
